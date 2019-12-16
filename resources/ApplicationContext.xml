@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--Spring核心配置文件-->
+
+    <!--配置dbcp数据源-->
+    <bean id="datasource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/smbms?useUnicode=true&amp;characterEncoding=utf-8"/>
+        <property name="username" value="root"/>
+        <property name="password" value="123"/>
+    </bean>
+
+    <!--配置sqlSessionFactoryBean-->
+    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="datasource"></property><!--配置数据源，上面已经存在这个bean,用ref直接引用-->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/><!--这样可以直接外链Mybatis，注意不要冲突-->
+        <property name="mapperLocations">
+            <list>
+                <value>classpath:test/mapper/xml/UserMapper.xml</value><!--或者写成通配符(这个示例是虚拟路径)：classpath:mapper/**/*.xml-->
+            </list>
+        </property>
+    </bean>
+
+    <!--配置SqlSessionTemplate-->
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBean"/><!--用已经存在的sqlSession实例，构造注入进来-->
+    </bean>
+</beans>
